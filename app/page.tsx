@@ -1,16 +1,28 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import ThreeCanvas from "@/components/ThreeCanvas/ThreeCanvas";
+import { useState } from "react";
+
+// // توی فایل page.tsx
+// import dynamic from "next/dynamic";
+
+// // این دستور می‌گه: این کامپوننت رو توی سرور رندر نکن، فقط توی مرورگر بیارش!
+// const ThreeCanvas = dynamic(
+//   () => import("@/components/ThreeCanvas/ThreeCanvas"),
+//   {
+//     ssr: false,
+//   },
+// );
 
 type Message = {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
 };
 
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,36 +31,36 @@ export default function Home() {
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      role: 'user',
+      role: "user",
       content: input,
     };
 
     // ۱. اضافه کردن پیام کاربر به صفحه
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
-    setInput('');
+    setInput("");
     setIsLoading(true);
 
     try {
       // ۲. ارسال مستقیم به بک‌اند
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: updatedMessages }),
       });
 
-      if (!response.body) throw new Error('ریسپانس خالی است');
+      if (!response.body) throw new Error("ریسپانس خالی است");
 
       // ۳. ساخت پیام هوش مصنوعی در استیت
       const aiMessageId = (Date.now() + 1).toString();
       setMessages((prev) => [
         ...prev,
-        { id: aiMessageId, role: 'assistant', content: '' },
+        { id: aiMessageId, role: "assistant", content: "" },
       ]);
 
       // ۴. خواندن استریم متنی کلمه به کلمه
       const reader = response.body.getReader();
-      const decoder = new TextDecoder('utf-8');
+      const decoder = new TextDecoder("utf-8");
 
       while (true) {
         const { done, value } = await reader.read();
@@ -60,12 +72,12 @@ export default function Home() {
           prev.map((msg) =>
             msg.id === aiMessageId
               ? { ...msg, content: msg.content + textChunk }
-              : msg
-          )
+              : msg,
+          ),
         );
       }
     } catch (error) {
-      console.error('خطا در دریافت پاسخ:', error);
+      console.error("خطا در دریافت پاسخ:", error);
     } finally {
       setIsLoading(false);
     }
@@ -74,7 +86,8 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-6 md:p-24 bg-slate-900 text-slate-100">
       <div className="z-10 max-w-2xl w-full flex flex-col gap-6">
-        
+        <ThreeCanvas />
+
         <header className="border-b border-slate-800 pb-4">
           <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">
             Prompt to 3D & AI Customizer
@@ -96,13 +109,13 @@ export default function Home() {
             <div
               key={m.id}
               className={`p-3 rounded-lg max-w-[85%] ${
-                m.role === 'user'
-                  ? 'bg-blue-600 text-white self-end rounded-br-none'
-                  : 'bg-slate-800 text-slate-200 self-start rounded-bl-none border border-slate-700'
+                m.role === "user"
+                  ? "bg-blue-600 text-white self-end rounded-br-none"
+                  : "bg-slate-800 text-slate-200 self-start rounded-bl-none border border-slate-700"
               }`}
             >
               <span className="text-xs font-semibold block mb-1 opacity-70">
-                {m.role === 'user' ? 'تو' : 'هوش مصنوعی'}
+                {m.role === "user" ? "تو" : "هوش مصنوعی"}
               </span>
               <p className="whitespace-pre-wrap leading-relaxed text-sm">
                 {m.content}
@@ -133,7 +146,6 @@ export default function Home() {
             ارسال
           </button>
         </form>
-
       </div>
     </main>
   );
