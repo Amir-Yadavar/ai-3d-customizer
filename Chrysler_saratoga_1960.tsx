@@ -25,18 +25,16 @@ export function ModelCar({ bodyColor = "#3b82f6", ...props }: ModelCarProps) {
     "/models/chrysler_saratoga_1960.glb",
   ) as unknown as GLTFResult;
 
+  if (materials.Body) {
+    materials.Body.color.set(bodyColor);
+  }
+
   return (
     <group {...props} dispose={null} scale={0.01}>
       <group rotation={[-Math.PI / 2, 0, 0]}>
         <mesh geometry={nodes.Object_2.geometry} material={materials.Tire} />
 
-        <mesh geometry={nodes.Object_3.geometry}>
-          <meshStandardMaterial
-            color={bodyColor}
-            roughness={0.3}
-            metalness={0.8}
-          />
-        </mesh>
+        <mesh geometry={nodes.Object_3.geometry} material={materials.Body} />
 
         <mesh geometry={nodes.Object_4.geometry} material={materials.Glass} />
       </group>
