@@ -47,9 +47,7 @@ function SpinningBox() {
 function ThreeCanvas() {
   const [selectedColor, setSelectedColor] = useState("#3b82f6");
   const [cameraView, setCameraView] = useState<CameraPreset>("overview");
-
-
-
+  const [isHoodOpen, setIsHoodOpen] = useState(false);
 
   return (
     <>
@@ -67,11 +65,11 @@ function ThreeCanvas() {
             maxPolarAngle={Math.PI / 2}
           /> */}
 
-        <CameraRig currentPreset={cameraView}/>
+          <CameraRig currentPreset={cameraView} />
 
           {/* <SpinningBox /> */}
           <Suspense fallback={null}>
-            <ModelCar bodyColor={selectedColor} />
+            <ModelCar bodyColor={selectedColor} isHoodOpen={isHoodOpen} />
             <ContactShadows
               position={[0, -0.01, 0]}
               opacity={0.75}
@@ -100,27 +98,36 @@ function ThreeCanvas() {
       <div className="flex items-center justify-center">
         <button
           className="p-2 m-2 rounded-2xl border border-gray-300 cursor-pointer"
-          onClick={()=>setCameraView("wheel")}
+          onClick={() => setCameraView("wheel")}
         >
           wheel
         </button>
         <button
           className="p-2 m-2 rounded-2xl border border-gray-300 cursor-pointer"
-          onClick={()=>setCameraView("rear")}
+          onClick={() => setCameraView("rear")}
         >
-         rear
+          rear
         </button>
         <button
           className="p-2 m-2 rounded-2xl border border-gray-300 cursor-pointer"
-          onClick={()=>setCameraView("interior")}
+          onClick={() => setCameraView("interior")}
         >
-         interior
+          interior
         </button>
         <button
           className="p-2 m-2 rounded-2xl border border-gray-300 cursor-pointer"
-          onClick={()=>setCameraView("overview")}
+          onClick={() => setCameraView("overview")}
         >
           reset view
+        </button>
+      </div>
+
+      <div className="flex items-center justify-center">
+        <button
+          className="p-2 m-2 rounded-2xl border border-gray-300 cursor-pointer"
+          onClick={() => setIsHoodOpen(!isHoodOpen)}
+        >
+          toggle hood
         </button>
       </div>
     </>
